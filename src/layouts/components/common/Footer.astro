@@ -1,0 +1,77 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import menu from "@config/menu.json";
+import social from "@config/social.json";
+import { siteConfig } from "@config/site";
+import LogoSVG from '@components/LogoSVG.astro';
+import { getPostUrl } from "@utils/slug";
+
+const footerMenu = menu.footer;
+const socialLinks = Object.entries(social).filter(([_, url]) => url);
+
+const recentPosts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => new Date(b.data.date || 0).getTime() - new Date(a.data.date || 0).getTime())
+  .slice(0, 3);
+---
+
+<footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Brand -->
+      <div>
+        <a href="/" class="group">
+          <LogoSVG class="w-40 h-auto [--logo-text:#a8a8a8] group-hover:[--logo-text:#ffffff] [--logo-star:#1085c7] group-hover:[--logo-star:#f59e0b]" />
+        </a>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+          From Sandton to Randburg, our background-checked team ensures affordable, top-quality results, giving you a spotless space without the stress.
+        </p>
+        {socialLinks.length > 0 && (
+          <div class="flex gap-3 mt-4">
+            {socialLinks.map(([platform, url]) => (
+              <a href={url as string} target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400" aria-label={platform}>
+                <Icon name={`mdi:${platform}`} class="w-5 h-5" />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Links -->
+      <nav>
+        <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
+        <ul class="space-y-2">
+          {footerMenu.map((item) => (
+            <li>
+              <a href={item.url} class="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                {item.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Recent Posts -->
+      <div>
+        <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Latest Posts</h3>
+        <div class="space-y-3">
+          {recentPosts.map((post) => (
+            <a href={getPostUrl(post)} class="flex gap-3 group">
+              {post.data.image && (
+                <Image src={post.data.image} alt="" width={64} height={36} class="w-16 h-9 object-cover rounded flex-shrink-0" loading="lazy" />
+              )}
+              <span class="text-sm text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2">
+                {post.data.title}
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
+      &copy; {new Date().getFullYear()} {siteConfig.title}. All rights reserved.
+    </p>
+  </div>
+</footer>

@@ -1,0 +1,44 @@
+---
+interface Props {
+  label: string;
+  group?: string;
+  expanded?: boolean;
+}
+
+const { label, group = 'default', expanded = false } = Astro.props;
+---
+
+<details class="accordion group border border-gray-200 dark:border-gray-700 rounded-lg mb-3" data-group={group} open={expanded}>
+  <summary class="flex justify-between items-center p-4 cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg list-none">
+    <span class="font-medium text-gray-900 dark:text-white">{label}</span>
+    <svg class="w-5 h-5 text-gray-500 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 9l6 6 6-6"/>
+    </svg>
+  </summary>
+  <div class="p-4 prose dark:prose-invert max-w-none">
+    <slot />
+  </div>
+</details>
+
+<script>
+  if (!window.__accordionInitialized) {
+    window.__accordionInitialized = true;
+    document.addEventListener(
+      'toggle',
+      (e) => {
+        const target = e.target as HTMLDetailsElement;
+        if (!target.matches?.('.accordion') || !target.open) return;
+
+        const group = target.dataset.group;
+        document.querySelectorAll(`.accordion[data-group="${group}"]`).forEach(other => {
+          if (other !== target) (other as HTMLDetailsElement).open = false;
+        });
+      },
+      true,
+    );
+  }
+</script>
+
+<style>
+  summary::-webkit-details-marker { display: none; }
+</style>

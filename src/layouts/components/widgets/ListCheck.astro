@@ -1,0 +1,35 @@
+---
+
+---
+
+<div class="list-check my-6 prose dark:prose-invert">
+  <slot />
+</div>
+
+<style>
+  .list-check :global(ul) {
+    list-style: none !important;
+    padding-left: 0 !important;
+  }
+  
+  .list-check :global(li) {
+    position: relative;
+    padding-left: 1.75rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .list-check :global(li::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    background: #3b82f6 url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center/10px no-repeat;
+    border-radius: 50%;
+  }
+
+  :global(.dark) .list-check :global(li::before) {
+    background-color: #2563eb;
+  }
+</style>

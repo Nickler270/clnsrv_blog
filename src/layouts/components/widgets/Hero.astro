@@ -1,0 +1,139 @@
+---
+import { Icon } from 'astro-icon/components';
+import social from '@config/social.json';
+
+const socialLinks = Object.entries(social).filter(([_, url]) => url?.trim());
+
+const iconMap: Record<string, string> = {
+  facebook: 'mdi:facebook', twitter: 'mdi:twitter', instagram: 'mdi:instagram',
+  youtube: 'mdi:youtube', linkedin: 'mdi:linkedin', github: 'mdi:github',
+  reddit: 'mdi:reddit', whatsapp: 'mdi:whatsapp', email: 'mdi:email'
+};
+
+const slides = [
+  {
+    bg: "https://cleanserv.co.za/wp-content/uploads/2025/10/close-up-disinfecting-with-cleaning-supplies.webp",
+    tagline: "Residential Cleaning",
+    heading: "A spotless home,\nguaranteed.",
+    sub: "Professional home cleaning tailored to your schedule and budget.",
+    cta: { label: "Get a Free Quote", href: "/contact-us/" },
+    secondary: { label: "Our Services", href: "/services/" },
+  },
+  {
+    bg: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=1920&q=80",
+    tagline: "Commercial Cleaning",
+    heading: "Keep your workspace\npristine.",
+    sub: "Flexible contracts for offices, retail spaces, and more — daily, weekly, or monthly.",
+    cta: { label: "Get a Free Quote", href: "/contact-us/" },
+    secondary: { label: "Commercial Services", href: "/services/commercial/" },
+  },
+  {
+    bg: "https://cleanserv.co.za/wp-content/uploads/2025/11/construction-site-with-barrow-filled-with-tools-scaled.webp",
+    tagline: "Industrial Cleaning",
+    heading: "Heavy-duty cleans\nfor demanding spaces.",
+    sub: "Factories, warehouses, food facilities — we handle the tough jobs.",
+    cta: { label: "Get a Free Quote", href: "/contact-us/" },
+    secondary: { label: "Industrial Services", href: "/services/industrial/" },
+  },
+];
+---
+
+<section class="relative w-full h-[95vh] -top-8 min-h-[600px] overflow-hidden" id="hero-slideshow">
+  {slides.map((slide, i) => (
+    <div
+      class="hero-slide absolute inset-0 transition-opacity duration-700 ease-in-out"
+      style={`opacity: ${i === 0 ? 1 : 0}; z-index: ${i === 0 ? 10 : 0};`}
+      data-index={i}
+    >
+      <img
+        src={slide.bg}
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover"
+        aria-hidden="true"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
+      <div class="relative z-10 h-full flex items-center">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <span class="inline-block text-sm font-semibold text-blue-400 uppercase tracking-widest mb-4">
+            {slide.tagline}
+          </span>
+          <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 whitespace-pre-line">
+            {slide.heading}
+          </h1>
+          <p class="text-lg md:text-xl text-gray-300 max-w-xl mb-8">
+            {slide.sub}
+          </p>
+            <div class="flex flex-wrap gap-4">
+              <a href={slide.cta.href} class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200">{slide.cta.label}</a>
+              <a href={slide.secondary.href} class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/30 backdrop-blur-sm transition-colors duration-200">{slide.secondary.label}</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  ))}
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+    {slides.map((_, i) => (
+      <button
+        class="hero-dot w-2.5 h-2.5 rounded-full border border-white/60 transition-all duration-300"
+        style={`background: ${i === 0 ? 'white' : 'transparent'};`}
+        data-index={i}
+        aria-label={`Go to slide ${i + 1}`}
+      />
+    ))}
+  </div>
+
+  <button
+    id="hero-prev"
+    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 border border-white/30 text-white backdrop-blur-sm transition-colors"
+    aria-label="Previous slide"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <button
+    id="hero-next"
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 border border-white/30 text-white backdrop-blur-sm transition-colors"
+    aria-label="Next slide"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</section>
+
+<script>
+  const slides = document.querySelectorAll<HTMLElement>('.hero-slide');
+  const dots = document.querySelectorAll<HTMLElement>('.hero-dot');
+  let current = 0;
+  let timer: ReturnType<typeof setInterval>;
+
+  function goTo(index: number) {
+    slides[current].style.opacity = '0';
+    slides[current].style.zIndex = '0';
+    dots[current].style.background = 'transparent';
+    current = (index + slides.length) % slides.length;
+    slides[current].style.opacity = '1';
+    slides[current].style.zIndex = '10';
+    dots[current].style.background = 'white';
+  }
+
+  function startTimer() {
+    timer = setInterval(() => goTo(current + 1), 5000);
+  }
+
+  function resetTimer() {
+    clearInterval(timer);
+    startTimer();
+  }
+
+  document.getElementById('hero-next')?.addEventListener('click', () => { goTo(current + 1); resetTimer(); });
+  document.getElementById('hero-prev')?.addEventListener('click', () => { goTo(current - 1); resetTimer(); });
+  dots.forEach((dot) => {
+    dot.addEventListener('click', () => { goTo(Number(dot.dataset.index)); resetTimer(); });
+  });
+
+  startTimer();
+</script>

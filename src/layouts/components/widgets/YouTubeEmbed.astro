@@ -1,0 +1,51 @@
+---
+interface Props {
+  url: string;
+  label: string;
+}
+
+const { url, label } = Astro.props;
+
+// Extract video ID for thumbnail
+const videoId = url.match(/(?:embed\/|v=|youtu\.be\/)([^?&]+)/)?.[1];
+const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '';
+---
+
+<div class="youtube-embed aspect-video bg-gray-900 rounded-lg overflow-hidden relative">
+  {thumbnail && (
+    <button 
+      class="youtube-play w-full h-full group"
+      data-src={url}
+      aria-label={`Play: ${label}`}
+    >
+      <img src={thumbnail} alt="" class="w-full h-full object-cover" loading="lazy" />
+      <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+        <svg class="w-16 h-16 text-white/90 group-hover:text-white group-hover:scale-110 transition-all" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </button>
+  )}
+</div>
+
+<script>
+  if (!window.__youtubeEmbedInitialized) {
+    window.__youtubeEmbedInitialized = true;
+    document.addEventListener('click', (event) => {
+      const button = event.target instanceof Element ? event.target.closest('.youtube-play') : null;
+      if (!button) return;
+
+      const src = button.getAttribute('data-src');
+      const container = button.closest('.youtube-embed');
+      if (container && src) {
+        const iframe = document.createElement('iframe');
+        iframe.className = 'w-full h-full';
+        iframe.src = `${src}?autoplay=1`;
+        iframe.title = button.getAttribute('aria-label') || 'YouTube video';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        container.replaceChildren(iframe);
+      }
+    });
+  }
+</script>

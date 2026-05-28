@@ -1,0 +1,109 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import Layout from '@layouts/Layout.astro';
+import { formatDate } from '@utils/date';
+import PostHeadings from '@layouts/components/table-of-contents/PostHeadings.astro';
+import RelatedPosts from '@layouts/components/blog/RelatedPosts.astro';
+import SocialShare from '@layouts/components/blog/SocialShare.astro';
+import SeriesNav from '@layouts/components/widgets/SeriesNav.astro';
+import ReadingProgress from '@layouts/components/blog/ReadingProgress.astro';
+import Breadcrumb from '@layouts/components/common/Breadcrumb.astro';
+import { getPostSlug, slugify } from '@utils/slug';
+
+const { post, headings } = Astro.props;
+const { title, description, image, date, categories, authors, tags, series } = post.data;
+
+const canonicalURL = Astro.site 
+  ? new URL(Astro.url.pathname, Astro.site).toString()
+  : Astro.url.pathname;
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blog', url: '/blog/' },
+  ...(categories?.length ? [{ name: categories[0], url: `/categories/${slugify(categories[0])}/` }] : []),
+  { name: title, url: canonicalURL }
+];
+
+const hasSeries = series && Array.isArray(series) && series.length === 2;
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={image?.src}
+  article={true}
+  canonical={canonicalURL}
+  publishDate={date}
+  author={authors?.[0] ? { name: authors[0] } : undefined}
+  tags={tags}
+  categories={categories}
+  breadcrumbs={breadcrumbs}
+>
+  <ReadingProgress />
+  
+  <article class="py-8">
+    <Breadcrumb items={breadcrumbs} className="mb-6" />
+    
+    <header class="mb-8">
+      <!-- Meta info -->
+      <div class="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-400 text-sm mb-4">
+        {date && (
+          <span class="flex items-center gap-1">
+            <Icon name="mdi:calendar" class="w-4 h-4" />
+            <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          </span>
+        )}
+        {categories?.length > 0 && (
+          <span class="flex items-center gap-1">
+            <Icon name="mdi:folder" class="w-4 h-4" />
+            {categories.map((cat: string, i: number) => (
+              <><a href={`/categories/${slugify(cat)}/`} class="hover:text-blue-600 dark:hover:text-blue-400">{cat}</a>{i < categories.length - 1 && ', '}</>
+            ))}
+          </span>
+        )}
+        {authors?.length > 0 && (
+          <span class="flex items-center gap-1">
+            <Icon name="mdi:account" class="w-4 h-4" />
+            {authors.map((author: string, i: number) => (
+              <><a href={`/authors/${slugify(author)}/`} class="hover:text-blue-600 dark:hover:text-blue-400">{author}</a>{i < authors.length - 1 && ', '}</>
+            ))}
+          </span>
+        )}
+      </div>
+      
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{title}</h1>
+      
+      {description && <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">{description}</p>}
+      
+      {image && (
+        <div class="rounded-lg overflow-hidden mb-8 aspect-video">
+          <Image src={image} alt={title} class="w-full h-full object-cover" width={1280} height={720} loading="eager" decoding="async" />
+        </div>
+      )}
+      
+      {tags?.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {tags.map((tag: string) => (
+            <a href={`/tags/${slugify(tag)}/`} class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-blue-100 dark:hover:bg-blue-900">
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+    
+    {hasSeries && <SeriesNav currentSlug={getPostSlug(post)} seriesName={series[0]} seriesPosition={series[1]} />}
+    
+    <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+      <PostHeadings headings={headings} />
+    </div>
+    
+    <div class="prose prose-lg dark:prose-invert prose-blue max-w-none">
+      <slot />
+    </div>
+    
+    <SocialShare title={title} description={description} url={canonicalURL} />
+    <RelatedPosts currentPost={post} />
+  </article>
+</Layout>

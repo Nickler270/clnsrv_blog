@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '@layouts/PostLayout.astro';
+// Import all widget components for MDX files
+import * as MarkdownComponents from '@layouts/components/MarkdownComponents.astro';
+import { getPostSlug } from '@utils/slug';
+
+// Get all blog posts
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  
+  return posts.map(post => {
+    return {
+      params: { slug: getPostSlug(post) },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+// Pass all widget components to MDX content
+const { Content, headings } = await render(post);
+
+// Make all components available to MDX content
+const components = MarkdownComponents;
+---
+
+<PostLayout post={post} headings={headings}>
+  <Content components={components} />
+</PostLayout>

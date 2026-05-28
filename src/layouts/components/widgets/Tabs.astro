@@ -1,0 +1,63 @@
+---
+
+---
+
+<div class="tabs-container">
+  <div class="tab-list flex flex-wrap border-b border-gray-200 dark:border-gray-700" role="tablist"></div>
+  <div class="tab-panels mt-4">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .tabs-container :global(.tab-panel.hidden) {
+    display: none;
+  }
+
+  .tabs-container:not([data-tabs-ready]) .tab-panels > :global(.tab-panel:not(:first-child)) {
+    display: none;
+  }
+</style>
+
+<script>
+  function initTabs() {
+    document.querySelectorAll('.tabs-container').forEach(container => {
+      const tabList = container.querySelector('.tab-list');
+      const panels = container.querySelectorAll('.tab-panel');
+      if (!tabList || !panels.length) return;
+      
+      tabList.innerHTML = '';
+      
+      panels.forEach((panel, i) => {
+        const name = panel.getAttribute('data-name') || `Tab ${i + 1}`;
+        const btn = document.createElement('button');
+        btn.className = `tab-btn px-4 py-2 text-sm font-medium transition-colors ${i === 0 ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`;
+        btn.setAttribute('role', 'tab');
+        btn.textContent = name;
+        
+        panel.classList.toggle('hidden', i !== 0);
+        
+        btn.onclick = () => {
+          tabList.querySelectorAll('.tab-btn').forEach(b => {
+            b.className = 'tab-btn px-4 py-2 text-sm font-medium transition-colors text-gray-500 hover:text-gray-700 dark:text-gray-400';
+          });
+          btn.className = 'tab-btn px-4 py-2 text-sm font-medium transition-colors border-b-2 border-blue-600 text-blue-600';
+          panels.forEach(p => p.classList.add('hidden'));
+          panel.classList.remove('hidden');
+        };
+        
+        tabList.appendChild(btn);
+      });
+
+      container.setAttribute('data-tabs-ready', 'true');
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTabs, { once: true });
+  } else {
+    initTabs();
+  }
+
+  document.addEventListener('astro:after-swap', initTabs);
+</script>
