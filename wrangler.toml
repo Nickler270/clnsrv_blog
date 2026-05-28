@@ -1,0 +1,6 @@
+name = "clnsrv-blog"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "163cdfb8dc8a00dabe8bf7b948f90393"
