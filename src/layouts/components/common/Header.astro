@@ -3,7 +3,7 @@ import ThemeToggle from "./ThemeToggle.astro";
 import { Image } from "astro:assets";
 import menu from "@config/menu.json";
 import { siteConfig } from "@config/site";
-import logoSVG from "@assets/favicons/logo_cleanserv-ba.svg";
+import LogoSVG from "@components/LogoSVG.astro";
 
 const mainMenu = menu.main;
 const currentPath = Astro.url.pathname;
@@ -13,7 +13,7 @@ const currentPath = Astro.url.pathname;
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <a href="/" class="flex-shrink-0">
-        <Image src={logoSVG} alt={siteConfig.title} width={100} height={140} />
+        <LogoSVG class="w-24 h-auto" />
       </a>
 
       <!-- Mobile menu button -->
