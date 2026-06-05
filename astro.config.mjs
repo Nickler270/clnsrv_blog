@@ -5,13 +5,15 @@ import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 
+import cloudflare from '@astrojs/cloudflare';
+
 const sitemapFilter = (page) => !page.includes('/page/') && !page.includes('/search');
 
 // https://astro.build/config
 export default defineConfig({
   // Set the site URL for production
   site: 'https://www.bitdoze.com',
-  
+
   // Base path (set to '/' for most sites)
   base: '/',
 
@@ -21,7 +23,7 @@ export default defineConfig({
       tailwindcss() // Reverted to simpler form, configPath removed
     ],
   },
-  
+
   // Configure Astro integrations
   integrations: [
     mdx(),
@@ -33,10 +35,12 @@ export default defineConfig({
       lastmod: new Date(),
     }),
   ],
-  
+
   // Prefetch links on hover for faster navigation
   prefetch: {
     prefetchAll: false,
     defaultStrategy: 'hover',
   },
+
+  adapter: cloudflare(),
 });

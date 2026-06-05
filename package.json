@@ -1,27 +1,34 @@
 {
-    "name": "astro-blog-theme",
-    "description": "A modern, responsive blog theme for Astro with support for tags, categories, and series",
-    "type": "module",
-    "version": "1.0.0",
-    "scripts": {
-        "dev": "astro dev --host",
-        "build": "astro build",
-        "preview": "astro preview",
-        "astro": "astro"
-    },
-    "dependencies": {
-        "@astrojs/mdx": "^5.0.4",
-        "@astrojs/rss": "^4.0.18",
-        "@astrojs/sitemap": "^3.7.2",
-        "@iconify-json/mdi": "^1.2.3",
-        "@tailwindcss/vite": "^4.2.4",
-        "astro": "^6.1.9",
-        "astro-icon": "^1.1.5",
-        "fuse.js": "^7.3.0",
-        "tailwindcss": "^4.2.4"
-    },
-    "devDependencies": {
-        "@tailwindcss/typography": "^0.5.19",
-        "vite": "^7.3.2"
-    }
+  "name": "astro-blog-theme",
+  "description": "A modern, responsive blog theme for Astro with support for tags, categories, and series",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev --host",
+    "build": "astro build",
+    "preview": "npm run build && wrangler dev",
+    "astro": "astro",
+    "generate-types": "wrangler types",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.6.0",
+    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "@iconify-json/mdi": "^1.2.3",
+    "@tailwindcss/vite": "^4.2.4",
+    "astro": "^6.1.9",
+    "astro-icon": "^1.1.5",
+    "fuse.js": "^7.3.0",
+    "tailwindcss": "^4.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "vite": "^7.3.2",
+    "wrangler": "^4.95.0"
+  },
+  "overrides": {
+    "vite": "^7"
+  }
 }
